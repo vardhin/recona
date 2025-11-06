@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-import '../config/app_theme.dart';
 import '../screens/settings_screen.dart';
 
-class FooterBar extends StatefulWidget {
+class FooterBar extends StatelessWidget {
   final Function(int) onTabChanged;
+  final int currentIndex;
 
-  const FooterBar({Key? key, required this.onTabChanged}) : super(key: key);
-
-  @override
-  State<FooterBar> createState() => _FooterBarState();
-}
-
-class _FooterBarState extends State<FooterBar> {
-  int _selectedIndex = 0;
+  const FooterBar({
+    Key? key,
+    required this.onTabChanged,
+    this.currentIndex = 0,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -29,12 +26,8 @@ class _FooterBarState extends State<FooterBar> {
       ),
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
+        currentIndex: currentIndex,
         onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-
           if (index == 3) {
             // Navigate to settings
             Navigator.push(
@@ -42,11 +35,11 @@ class _FooterBarState extends State<FooterBar> {
               MaterialPageRoute(builder: (context) => const SettingsScreen()),
             );
           } else {
-            widget.onTabChanged(index);
+            onTabChanged(index);
           }
         },
-        selectedItemColor: AppColors.iconActive,
-        unselectedItemColor: AppColors.iconInactive,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         elevation: 0,
         items: const [
