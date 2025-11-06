@@ -319,16 +319,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
         onPressed: _showAddContactDialog,
         child: const Icon(Icons.person_add),
       ),
-      // Add debug button for storage
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      persistentFooterButtons: [
-        ElevatedButton(
-          onPressed: () async {
-            await context.read<ContactProvider>().debugCheckStorage();
-          },
-          child: const Text('Debug Storage'),
-        ),
-      ],
     );
   }
 }

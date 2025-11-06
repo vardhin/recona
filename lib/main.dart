@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'widgets/app_layout.dart';
 import 'providers/theme_provider.dart';
 import 'providers/contact_provider.dart';
+import 'providers/chat_provider.dart';
 
 void main() {
   runApp(
@@ -10,6 +11,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => ContactProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: const MyApp(),
     ),
