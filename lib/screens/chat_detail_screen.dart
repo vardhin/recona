@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../providers/chat_provider.dart';
+import '../services/event_service.dart';
+import '../events/message_events.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -29,36 +31,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
-    final message = Message(
-      id: const Uuid().v4(),
+    final event = SendMessageEvent(
       chatId: widget.chat.id,
-      senderId: 'me', // Replace with actual user ID
       content: _messageController.text.trim(),
-      timestamp: DateTime.now(),
-      isMe: true,
       replyToId: _replyingTo?.id,
-      replyToContent: _replyingTo?.content,
     );
 
-    context.read<ChatProvider>().sendMessage(message);
-    _messageController.clear();
-    setState(() {
-      _replyingTo = null;
-    });
+    final response = await EventService().eventBus.emit(event);
 
-    // Scroll to bottom
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+    if (response.success) {
+      final messageSentResponse = response as MessageSentResponse;
+      if (messageSentResponse.message != null) {
+        // Use the correct method name from your ChatProvider
+        context.read<ChatProvider>().sendMessage(messageSentResponse.message!);
       }
-    });
+      
+      _messageController.clear();
+      setState(() => _replyingTo = null);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.error ?? 'Failed to send message')),
+      );
+    }
   }
 
   void _showMessageOptions(Message message) {

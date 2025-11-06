@@ -4,8 +4,12 @@ import 'widgets/app_layout.dart';
 import 'providers/theme_provider.dart';
 import 'providers/contact_provider.dart';
 import 'providers/chat_provider.dart';
+import 'services/event_service.dart';
 
 void main() {
+  // Initialize event service
+  EventService().initialize();
+  
   runApp(
     MultiProvider(
       providers: [
